@@ -1,23 +1,23 @@
 import Foundation
 
-public func map<T, U>(result:Result<T>, f:(T)->U) -> Result<U>{
-  switch result{
+public func map<T, U>(source:Result<T>, @noescape transform:(T)->U) -> Result<U>{
+  switch source{
   case .Error(let error):
     return Result<U>.Error(error)
   case .Value(let box):
-    return Result<U>.Value(Box(f(box.unbox)))
+    return Result<U>.Value(Box(transform(box.unbox)))
   }
 }
 
 
 //A wrapper to work-around the fact you can't disambiguate a function in a method of the same name when inside a type with the same name as the module.
-public func mapAlias<T, U>(result:Result<T>, f:(T)->U) -> Result<U>{
-  return map(result, f)
+public func mapAlias<T, U>(source:Result<T>, transform:(T)->U) -> Result<U>{
+  return map(source, transform)
 }
 
 
-public func flatten<T>(result:Result<Result<T>>)->Result<T>{
-  switch result{
+public func flatten<T>(source:Result<Result<T>>)->Result<T>{
+  switch source{
   case .Error(let error):
     return .Error(error)
   case .Value(let box):
@@ -26,14 +26,14 @@ public func flatten<T>(result:Result<Result<T>>)->Result<T>{
 }
 
 
-public func fmap<T,U>(result:Result<T>, f:(T)->Result<U>) -> Result<U>{
-  return flatten(map(result, f))
+public func flatMap<T,U>(source:Result<T>, @noescape transform:(T)->Result<U>) -> Result<U>{
+  return flatten(map(source, transform))
 }
 
 
 //A wrapper to work-around the fact you can't disambiguate a function in a method of the same name when inside a type with the same name as the module.
-public func fmapAlias<T,U>(result:Result<T>, f:(T)->Result<U>) -> Result<U>{
-  return fmap(result, f)
+public func flatMapAlias<T,U>(result:Result<T>, f:(T)->Result<U>) -> Result<U>{
+  return flatMap(result, f)
 }
 
 
@@ -74,7 +74,7 @@ public extension Result{
   }
   
   
-  func fmap<U>(f:(T)->Result<U>)->Result<U>{
-    return fmapAlias(self, f)
+  func flatMap<U>(f:(T)->Result<U>)->Result<U>{
+    return flatMapAlias(self, f)
   }
 }

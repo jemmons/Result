@@ -63,14 +63,14 @@ class ResultTests: XCTestCase {
       return Result(666)
     }
 
-    let mappedValue = valueResult.fmap(valueMap)
+    let mappedValue = valueResult.flatMap(valueMap)
     XCTAssertEqual(mappedValue.value!, 10)
-    let topMappedValue = fmap(valueResult, valueMap)
+    let topMappedValue = flatMap(valueResult, valueMap)
     XCTAssertEqual(topMappedValue.value!, mappedValue.value!)
     
-    let mappedError = errorResult.fmap(errorMap)
+    let mappedError = errorResult.flatMap(errorMap)
     XCTAssertEqual(mappedError.error!, error)
-    let topMappedError = fmap(errorResult, errorMap)
+    let topMappedError = flatMap(errorResult, errorMap)
     XCTAssertEqual(topMappedError.error!, mappedError.error!)
   }
 }
